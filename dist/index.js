@@ -46,7 +46,7 @@ server.listen(PORT, () => {
 });
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.ORIGIN_URL,
     },
 });
 io.on("connection", (socket) => {
@@ -82,9 +82,6 @@ io.on("connection", (socket) => {
             console.error("Error handling private message:", err);
         }
     }));
-});
-app.use("/", (req, res, next) => {
-    res.json({ message: "Hello World" });
 });
 app.use("/api", apiRouter);
 // Error handling middleware
