@@ -3,6 +3,8 @@ import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { Server } from "socket.io";
+const User = require("./models/user");
 
 dotenv.config();
 
@@ -32,11 +34,53 @@ app.use(
   })
 );
 
-app.use("/api", apiRouter);
-
 server.listen(PORT, () => {
   console.log("Server is running at http://localhost:4000");
 });
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.on("joined", () => {
+    io.sockets.emit("new-user", "new user joined");
+  });
+
+  socket.on("private message", async (to, message, myself) => {
+    try {
+      const user = await User.findOne({ username: to });
+      const sender = await User.findOne({ username: myself });
+
+      io.sockets.emit("refresh", "new Message");
+
+      if (user && sender) {
+        user.messages.push({
+          receiver: user.username,
+          message,
+          sender: sender.username,
+          time: new Date(),
+        });
+        sender.messages.push({
+          receiver: user.username,
+          message,
+          sender: sender.username,
+          time: new Date(),
+        });
+        await user.save();
+        await sender.save();
+      } else {
+        console.error("User or sender not found.");
+      }
+    } catch (err) {
+      console.error("Error handling private message:", err);
+    }
+  });
+});
+
+app.use("/api", apiRouter);
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

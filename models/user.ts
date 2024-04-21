@@ -19,7 +19,7 @@ const userSchema = new Schema(
       {
         message: String,
         sender: String,
-        reciver: String,
+        receiver: String,
         time: Date,
       },
     ],
