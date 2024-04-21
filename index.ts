@@ -40,7 +40,7 @@ server.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.ORIGIN_URL,
   },
 });
 
@@ -80,9 +80,9 @@ io.on("connection", (socket) => {
   });
 });
 
-app.use("/", (req: Request, res: Response, next: NextFunction) => {
+/* app.use("/", (req: Request, res: Response, next: NextFunction) => {
   res.json({ message: "Hello World" });
-});
+}); */
 
 app.use("/api", apiRouter);
 
