@@ -1,9 +1,13 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=16.17.1"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.ts",
     "dev": "nodemon index.ts"
   },
   "keywords": [],

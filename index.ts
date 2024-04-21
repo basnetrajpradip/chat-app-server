@@ -80,6 +80,10 @@ io.on("connection", (socket) => {
   });
 });
 
+app.use("/", (req: Request, res: Response, next: NextFunction) => {
+  res.json({ message: "Hello World" });
+});
+
 app.use("/api", apiRouter);
 
 // Error handling middleware
